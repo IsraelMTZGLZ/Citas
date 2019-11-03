@@ -119,8 +119,9 @@ email_User as email,
 address_User as address,
 status_Doctor as statusDoc,
 professionalId_Doctor as professionalId,
+name_Speciality as speciality,
 idDoctor as idDoctor
-from (tb_Users join tb_Person join tb_Doctor) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Users`.`type_User`= 'Doctor') and (`tb_Doctor`.`fk_Person` = `tb_Person`.`idPerson`));
+from (tb_Users join tb_Person join tb_Doctor join tb_Speciality) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Users`.`type_User`= 'Doctor') and (`tb_Doctor`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Doctor`.`fk_Specialities` = `tb_Speciality`.`idSpeciality`));
 
 create or replace view vw_Collection AS SELECT idPerson as id,
 name_Person as name,
