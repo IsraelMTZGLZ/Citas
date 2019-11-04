@@ -184,6 +184,8 @@ cd_Day timestamp default current_timestamp,
 lu_Day timestamp default current_timestamp on update current_timestamp
 );
 
+ALTER TABLE tb_Day CHANGE status_Day status_Day enum('Active','Inactive') default 'Active';
+
 create table tb_CitaPatient(idCitaPatient int primary key auto_increment,
 hour_CitaPatient date not null,
 status_CitaPatient enum('Active','Inactive','InConsultation','Here','NotHere','Pending') default 'Active',
