@@ -148,7 +148,8 @@ gender_Person as gender,
 email_User as email,
 address_User as address,
 enrollment_Patient as enrollment_Patient,
-status_Patient as status_Patient
+status_Patient as status_Patient,
+idPatient as idPatient
 from (tb_Users join tb_Person join tb_Patient) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Users`.`type_User`= 'Patient') and (`tb_Patient`.`fk_Person` = `tb_Person`.`idPerson`));
 
 create or replace view vw_Reception AS SELECT idPerson as id,
@@ -187,19 +188,50 @@ lu_Day timestamp default current_timestamp on update current_timestamp
 ALTER TABLE tb_Day CHANGE status_Day status_Day enum('Active','Inactive') default 'Active';
 
 create table tb_CitaPatient(idCitaPatient int primary key auto_increment,
-hour_CitaPatient date not null,
+hour_CitaPatient TIME (0) not null,
+date_CitaPatient date not null,
 status_CitaPatient enum('Active','Inactive','InConsultation','Here','NotHere','Pending') default 'Active',
 description_CitaPatient text,
 fk_Doctor int,
 fk_Day int,
-fk_Pacient int,
+fk_Patient int,
 cd_CitaPatient timestamp default current_timestamp,
 lu_CitaPatient timestamp default current_timestamp on update current_timestamp
 );
 
 alter table tb_CitaPatient add FOREIGN KEY (fk_Doctor) references tb_Doctor(idDoctor)on update cascade on delete cascade;
 alter table tb_CitaPatient add FOREIGN KEY (fk_Day) references tb_Day(idDay)on update cascade on delete cascade;
-alter table tb_CitaPatient add FOREIGN KEY (fk_Pacient) references tb_Patient(idPatient)on update cascade on delete cascade;
+alter table tb_CitaPatient add FOREIGN KEY (fk_Patient) references tb_Patient(idPatient)on update cascade on delete cascade;
+
+ALTER TABLE tb_CitaPatient CHANGE hour_CitaPatient hour_CitaPatient TIME (0) not null;
+ALTER TABLE tb_CitaPatient add column date_CitaPatient date not null;
+
+create or replace view vw_CitaDoc AS SELECT idCitaPatient as id,
+name_Day as Day,
+hour_CitaPatient as hour,
+date_CitaPatient as dateCP,
+description_CitaPatient as description,
+name_Person as name,
+tel_Person as tel,
+gender_Person as gender,
+email_User as email,
+address_User as address,
+professionalId_Doctor as professionalId,
+idPatient as idPatient
+from (tb_Users join tb_Person join tb_Doctor join tb_Day join tb_Patient join tb_CitaPatient) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_CitaPatient`.`fk_Day`= `tb_Day`.`idDay`) and (`tb_CitaPatient`.`fk_Doctor` = `tb_Doctor`.`idDoctor`)and(`tb_CitaPatient`.`fk_Patient` = `tb_Patient`.`idPatient`));
+
+
+create or replace view vw_CitaDoc AS SELECT idCitaPatient as id,
+name_Day as Day,
+hour_CitaPatient as hour,
+date_CitaPatient as dateCP,
+description_CitaPatient as description,
+enrollment_Patient as enrollment_Patient,
+professionalId_Doctor as professionalId,
+idPatient as idPatient
+from (tb_Doctor join tb_Day join tb_Patient join tb_CitaPatient) where ((`tb_CitaPatient`.`fk_Day`= `tb_Day`.`idDay`) and (`tb_CitaPatient`.`fk_Doctor` = `tb_Doctor`.`idDoctor`)and(`tb_CitaPatient`.`fk_Patient` = `tb_Patient`.`idPatient`));
+
+
 
 create table tb_CaseFile(idCaseFile int primary key auto_increment,
 weight_CaseFile decimal not null,

@@ -45,12 +45,6 @@ class Api extends REST_Controller {
                 )
             );
         }else{
-          //callback_check_Cname
-          //callback_check_Clastname
-          //callback_check_Cstatus
-          //required|max_length[150]
-          //required|max_length[160]|min_length[4]
-          //required|exact_length[1]|callback_gender_valid
             $this->form_validation->set_data($data);
             $this->form_validation->set_rules('name_Day','name_Day','callback_check_name');
             $this->form_validation->set_rules('status_Day','status_Day','required');
