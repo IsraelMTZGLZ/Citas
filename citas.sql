@@ -2,6 +2,15 @@ Create database Citas;
 
 use Citas;
 
+create table tb_PersonPatient(idPersonPatient int primary key auto_increment,
+  name_PersonPatient varchar(100)not null,
+  surname_PersonPatient varchar(100) not null,
+  gender_PersonPatient enum('M','F') not null,
+  tel_PersonPatient varchar(150) not null,
+  cd_PersonPatient timestamp default current_timestamp,
+  lu_PersonPatient timestamp default current_timestamp
+);
+
 create table tb_Person(idPerson int primary key auto_increment,
   name_Person varchar(100)not null,
   surname_Person varchar(100) not null,
@@ -15,7 +24,7 @@ insert into tb_Person(name_Person,surname_Person,gender_Person,tel_Person) value
   insert into tb_Person(name_Person,surname_Person,gender_Person,tel_Person) values('Beto','Alpanza','M','441292649');
     insert into tb_Person(name_Person,surname_Person,gender_Person,tel_Person) values('Rafa','Tero','M','442292649');
       insert into tb_Person(name_Person,surname_Person,gender_Person,tel_Person) values('Lik','Andro','M','442492649');
-        insert into tb_Person(name_Person,surname_Person,gender_Person,tel_Person) values('Chu','Tetas','M','442492449');
+        insert into tb_PersonPatient(name_PersonPatient,surname_PersonPatient,gender_PersonPatient,tel_PersonPatient) values('Chu','Tetas','M','442492449');
 
 
 create table tb_Users(idUser int primary key auto_increment,
@@ -28,12 +37,27 @@ create table tb_Users(idUser int primary key auto_increment,
   cd_User timestamp default current_timestamp,
   lu_User timestamp default current_timestamp on update current_timestamp
 );
+
+create table tb_UsersPatient(idUserPatient int primary key auto_increment,
+  email_UserPatient varchar(150) not null unique,
+  password_UserPatient varchar(150) default '$2a$10$BPFaoqQ7pdl06vx7D39rHuXLlow1dhQsVt502y7hEgAho9NmI0woi',
+  status_UserPatient enum('Active','Inactive','Pending','Blocked') default 'Pending',
+  address_UserPatient text not null,
+  type_UserPatient enum('Admin','Doctor','Collection','Patient','Reception'),
+  fk_PersonPatient int,
+  cd_UserPatient timestamp default current_timestamp,
+  lu_UserPatient timestamp default current_timestamp on update current_timestamp
+);
+
+
 alter table tb_Users add FOREIGN KEY (fk_Person) references tb_Person(idPerson)on update cascade on delete cascade;
-insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('israel@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Admin','Active',3);
-  insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('beto@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Doctor','Active',4);
-    insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('rafa@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Collection','Active',5);
-      insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('lika@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','BlackMonth','Patient','Active',6);
-        insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('chucho@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','BlackMonth','Reception','Active',7);
+alter table tb_UsersPatient add FOREIGN KEY (fk_PersonPatient) references tb_PersonPatient(idPersonPatient)on update cascade on delete cascade;
+
+insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('israel@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Admin','Active',1);
+  insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('beto@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Doctor','Active',2);
+    insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('rafa@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Collection','Active',3);
+          insert into  tb_Users(email_User,password_User,address_User,type_User,status_User,fk_Person) values('raf@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','ToliYork','Reception','Active',4);
+        insert into  tb_UsersPatient(email_UserPatient,password_UserPatient,address_UserPatient,type_UserPatient,status_UserPatient,fk_PersonPatient) values('chucho@gmail.com','$2a$10$hGCOm1Od4zdNSF7NbNDzruwEJTVaIWNVRnRxLqo8wc8dza.p.nRTq','BlackMonth','Patient','Active',1);
 
 
 
@@ -58,7 +82,7 @@ create table tb_Doctor(idDoctor int primary key auto_increment,
 
 alter table tb_Doctor add FOREIGN KEY (fk_Person) references tb_Person(idPerson)on update cascade on delete cascade;
 alter table tb_Doctor add FOREIGN KEY (fk_Specialities) references tb_Speciality(idSpeciality)on update cascade on delete cascade;
-insert into tb_Doctor(professionalId_Doctor,fk_Specialities,fk_Person) values('12312212',1,4);
+insert into tb_Doctor(professionalId_Doctor,fk_Specialities,fk_Person) values('12312212',1,2);
 
 
 create table tb_Collection(idCollection int primary key auto_increment,
@@ -69,7 +93,7 @@ create table tb_Collection(idCollection int primary key auto_increment,
   fk_Person int
 );
 alter table tb_Collection add FOREIGN KEY (fk_Person) references tb_Person(idPerson)on update cascade on delete cascade;
-insert into tb_Collection(enrollment_Collection,status_Collection,fk_Person) values('1212B','Open',5);
+insert into tb_Collection(enrollment_Collection,status_Collection,fk_Person) values('1212B','Open',3);
 
 
 
@@ -78,11 +102,11 @@ create table tb_Patient(idPatient INT PRIMARY KEY AUTO_INCREMENT,
   status_Patient enum('Appointment','NoDate','Payment','Available','NoAvailable') default 'NoDate',
   cd_Patient timestamp default current_timestamp,
   lu_Patient timestamp default current_timestamp on update current_timestamp,
-  fk_Person int
+  fk_PersonPatient int
 );
 
-alter table tb_Patient add FOREIGN KEY (fk_Person) references tb_Person(idPerson)on update cascade on delete cascade;
-insert into tb_Patient(enrollment_Patient,status_Patient,fk_Person) values('1314H','NoDate',6);
+alter table tb_Patient add FOREIGN KEY (fk_PersonPatient) references tb_PersonPatient(idPersonPatient)on update cascade on delete cascade;
+insert into tb_Patient(enrollment_Patient,status_Patient,fk_PersonPatient) values('1314H','NoDate',1);
 
 
 create table tb_Reception(idReception int primary key auto_increment,
@@ -92,7 +116,7 @@ create table tb_Reception(idReception int primary key auto_increment,
   fk_Person int
 );
 alter table tb_Reception add FOREIGN KEY (fk_Person) references tb_Person(idPerson)on update cascade on delete cascade;
-insert into tb_Reception(enrollment_Reception,fk_Person) values('1314P',7);
+insert into tb_Reception(enrollment_Reception,fk_Person) values ("QWERTY2",4);
 
 
 create or replace view vw_Admin AS SELECT idPerson as id,
@@ -137,20 +161,20 @@ status_Collection as status_Collection,
 enrollment_Collection as enrollment_Collection
 from (tb_Users join tb_Person join tb_Collection) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Users`.`type_User`= 'Collection') and (`tb_Collection`.`fk_Person` = `tb_Person`.`idPerson`));
 
-create or replace view vw_Patient AS SELECT idPerson as id,
-name_Person as name,
-surname_Person as lastname,
-status_User as status,
-password_User as password,
-type_User as type,
-tel_Person as tel,
-gender_Person as gender,
-email_User as email,
-address_User as address,
+create or replace view vw_Patient AS SELECT idPersonPatient as id,
+name_PersonPatient as name,
+surname_PersonPatient as lastname,
+status_UserPatient as status,
+password_UserPatient as password,
+type_UserPatient as type,
+tel_PersonPatient as tel,
+gender_PersonPatient as gender,
+email_UserPatient as email,
+address_UserPatient as address,
 enrollment_Patient as enrollment_Patient,
 status_Patient as status_Patient,
 idPatient as idPatient
-from (tb_Users join tb_Person join tb_Patient) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_Users`.`type_User`= 'Patient') and (`tb_Patient`.`fk_Person` = `tb_Person`.`idPerson`));
+from (tb_UsersPatient join tb_PersonPatient join tb_Patient) where ((`tb_UsersPatient`.`fk_PersonPatient` = `tb_PersonPatient`.`idPersonPatient`) and (`tb_UsersPatient`.`type_UserPatient`= 'Patient') and (`tb_Patient`.`fk_PersonPatient` = `tb_PersonPatient`.`idPersonPatient`));
 
 create or replace view vw_Reception AS SELECT idPerson as id,
 name_Person as name,
@@ -204,32 +228,6 @@ alter table tb_CitaPatient add FOREIGN KEY (fk_Day) references tb_Day(idDay)on u
 alter table tb_CitaPatient add FOREIGN KEY (fk_Patient) references tb_Patient(idPatient)on update cascade on delete cascade;
 
 ALTER TABLE tb_CitaPatient CHANGE hour_CitaPatient hour_CitaPatient TIME (0) not null;
-ALTER TABLE tb_CitaPatient add column date_CitaPatient date not null;
-
-create or replace view vw_CitaDoc AS SELECT idCitaPatient as id,
-name_Day as Day,
-hour_CitaPatient as hour,
-date_CitaPatient as dateCP,
-description_CitaPatient as description,
-name_Person as name,
-tel_Person as tel,
-gender_Person as gender,
-email_User as email,
-address_User as address,
-professionalId_Doctor as professionalId,
-idPatient as idPatient
-from (tb_Users join tb_Person join tb_Doctor join tb_Day join tb_Patient join tb_CitaPatient) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_CitaPatient`.`fk_Day`= `tb_Day`.`idDay`) and (`tb_CitaPatient`.`fk_Doctor` = `tb_Doctor`.`idDoctor`)and(`tb_CitaPatient`.`fk_Patient` = `tb_Patient`.`idPatient`));
-
-
-create or replace view vw_CitaDoc AS SELECT idCitaPatient as id,
-name_Day as Day,
-hour_CitaPatient as hour,
-date_CitaPatient as dateCP,
-description_CitaPatient as description,
-enrollment_Patient as enrollment_Patient,
-professionalId_Doctor as professionalId,
-idPatient as idPatient
-from (tb_Doctor join tb_Day join tb_Patient join tb_CitaPatient) where ((`tb_CitaPatient`.`fk_Day`= `tb_Day`.`idDay`) and (`tb_CitaPatient`.`fk_Doctor` = `tb_Doctor`.`idDoctor`)and(`tb_CitaPatient`.`fk_Patient` = `tb_Patient`.`idPatient`));
 
 
 
@@ -297,6 +295,23 @@ description_DayOf text,
 cd_DayOf timestamp default current_timestamp,
 lu_DayOf timestamp default current_timestamp on update current_timestamp
 );
+
+CREATE TABLE `tkeys` (
+ `id` INT(11) NOT NULL AUTO_INCREMENT,
+`user_id` INT(11) NOT NULL,
+  `ckey` VARCHAR(40) NOT NULL,
+   `level` INT(2) NOT NULL,
+  `ignore_limits` TINYINT(1) NOT NULL DEFAULT '0',
+   `is_private_key` TINYINT(1)  NOT NULL DEFAULT '0',
+   `ip_addresses` TEXT NULL DEFAULT NULL,
+     `date_created` INT(11) NOT NULL,
+     PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+INSERT INTO tkeys (user_id,ckey,level,date_created) VALUES (1,'QWERTY',0,123456789);
+
+
 
 
 create table user(id INTEGER NOT NULL PRIMARY KEY,
