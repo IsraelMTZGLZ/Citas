@@ -81,27 +81,27 @@ class Api extends REST_Controller {
                 $this->db->trans_begin();
 
                 $person = array(
-                    "name_Person"=>$this->post('name'),
-                    "surname_Person "=>$this->post('lastname'),
-                    "gender_Person"=>$this->post('gender'),
-                    "tel_Person"=>$this->post('tel')
+                    "name_PersonPatient"=>$this->post('name'),
+                    "surname_PersonPatient "=>$this->post('lastname'),
+                    "gender_PersonPatient"=>$this->post('gender'),
+                    "tel_PersonPatient"=>$this->post('tel')
                 );
 
-                $personResponse = $this->DAO->saveOrUpdateItem('tb_Person',$person,null,true);
+                $personResponse = $this->DAO->saveOrUpdateItem('tb_PersonPatient',$person,null,true);
                 if($personResponse['status']=="success"){
                     $user = array(
-                        "email_User"=>$this->post('email'),
-                        "type_User"=>"Patient",
-                        "status_User "=>$this->post("status"),
-                        "address_User "=>$this->post('address'),
-                        "fk_Person"=>$personResponse['key']
+                        "email_UserPatient"=>$this->post('email'),
+                        "type_UserPatient"=>"Patient",
+                        "status_UserPatient "=>$this->post("status"),
+                        "address_UserPatient "=>$this->post('address'),
+                        "fk_PersonPatient"=>$personResponse['key']
                     );
-                    $userResponse = $this->DAO->saveOrUpdateItem('tb_Users',$user,null,true);
+                    $userResponse = $this->DAO->saveOrUpdateItem('tb_UsersPatient',$user,null,true);
                     if($userResponse['status']=="success"){
 
                       $collect = array(
                           "enrollment_Patient"=>$this->post('enrollment_Patient'),
-                          "fk_Person"=>$personResponse['key']
+                          "fk_PersonPatient"=>$personResponse['key']
                       );
                       $collectResponse = $this->DAO->saveOrUpdateItem('tb_Patient',$collect,null,true);
                       if($collectResponse['status']=="success"){
@@ -148,7 +148,7 @@ class Api extends REST_Controller {
 
     function patient_put($id=null){
         $data = $this->put();
-        $Eixts = $this->DAO->selectEntity('tb_Person',array('idPerson'=>$id),TRUE);
+        $Eixts = $this->DAO->selectEntity('tb_PersonPatient',array('idPersonPatient'=>$id),TRUE);
         if($Eixts){
           if(count($data) == 0 || count($data) > 19){
               $response = array(
@@ -192,35 +192,35 @@ class Api extends REST_Controller {
                   $this->db->trans_begin();
 
                   $person = array(
-                    "name_Person"=>$this->put('name'),
-                    "surname_Person "=>$this->put('lastname'),
-                    "gender_Person"=>$this->put('gender'),
-                    "tel_Person"=>$this->put('tel')
+                    "name_PersonPatient"=>$this->put('name'),
+                    "surname_PersonPatient "=>$this->put('lastname'),
+                    "gender_PersonPatient"=>$this->put('gender'),
+                    "tel_PersonPatient"=>$this->put('tel')
                   );
 
 
-                  $personResponse = $this->DAO->saveOrUpdateItem('tb_Person',$person,array('idPerson'=>$id));
+                  $personResponse = $this->DAO->saveOrUpdateItem('tb_PersonPatient',$person,array('idPersonPatient'=>$id));
 
                   if($personResponse['status']=="success"){
                       $user = array(
-                        "email_User"=>$this->put('email'),
-                        "type_User"=>"Collection",
-                        "status_User "=>$this->put("status"),
-                        "address_User "=>$this->put('address'),
-                        "fk_Person"=>$id
+                        "email_UserPatient"=>$this->put('email'),
+                        "type_UserPatient"=>"Patient",
+                        "status_UserPatient "=>$this->put("status"),
+                        "address_UserPatient"=>$this->put('address'),
+                        "fk_PersonPatient"=>$id
                       );
-                      $userResponse = $this->DAO->saveOrUpdateItem('tb_Users',$user,array('fk_Person'=>$id));
+                      $userResponse = $this->DAO->saveOrUpdateItem('tb_UsersPatient',$user,array('fk_PersonPatient'=>$id));
                       if($userResponse['status']=="success"){
 
                         $collect = array(
                             "enrollment_Patient"=>$this->put('enrollment_Patient'),
-                            "fk_Person"=>$id
+                            "fk_PersonPatient"=>$id
                         );
-                        $collectResponse = $this->DAO->saveOrUpdateItem('tb_Patient',$collect,array('fk_Person'=>$id));
+                        $collectResponse = $this->DAO->saveOrUpdateItem('tb_Patient',$collect,array('fk_PersonPatient'=>$id));
                         if($collectResponse['status']=="success"){
                           $response = array(
                              "status"=>"success",
-                             "message"=>"Collect created successfully",
+                             "message"=>"Patient updatedd successfully",
                              "data"=>$collectResponse,
                          );
                         }else{
@@ -277,17 +277,17 @@ class Api extends REST_Controller {
 
         $id = $this->get('id');
 		if ($id) {
-			$Admin = $this->DAO->selectEntity('tb_Person',array('idPerson'=>$id),TRUE);
+			$Admin = $this->DAO->selectEntity('tb_PersonPatient',array('idPersonPatient'=>$id),TRUE);
 
 
 			if($Admin){
       $this->db->trans_begin();
 
-      $Admin = $this->DAO->deleteData('tb_Person',array('idPerson'=>$id));
+      $Admin = $this->DAO->deleteData('tb_PersonPatient',array('idPersonPatient'=>$id));
          if($Admin['status']=="success"){
-             $User = $this->DAO->deleteData('tb_Users',array('idUser'=>$id));
+             $User = $this->DAO->deleteData('tb_UsersPatient',array('idUserPatient'=>$id));
              if($User['status']=="success"){
-                $Collect= $this->DAO->deleteData('tb_Patient',array('idCollection'=>$id));
+                $Collect= $this->DAO->deleteData('tb_Patient',array('idPatient'=>$id));
                 if($Collect){
                   $response = array(
                      "status"=>"success",
@@ -370,7 +370,7 @@ class Api extends REST_Controller {
 
     function check_email($str){
       if ( strlen($str)>=1) {
-        $empresaExists = $this->DAO->selectEntity('tb_Users',array('email_User'=>$str),TRUE);
+        $empresaExists = $this->DAO->selectEntity('tb_UsersPatient',array('email_UserPatient'=>$str),TRUE);
         if (!$empresaExists) {
           return TRUE;
         } else {
@@ -419,7 +419,7 @@ class Api extends REST_Controller {
 
     function check_emailU($str){
       if ( strlen($str)>=1) {
-        $empresaExists = $this->DAO->selectEntity('tb_Users',array('email_User'=>$str),TRUE);
+        $empresaExists = $this->DAO->selectEntity('tb_UsersPatient',array('email_UserPatient'=>$str),TRUE);
         if (!$empresaExists) {
 
           return TRUE;

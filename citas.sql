@@ -210,7 +210,7 @@ lu_Day timestamp default current_timestamp on update current_timestamp
 );
 
 ALTER TABLE tb_Day CHANGE status_Day status_Day enum('Active','Inactive') default 'Active';
-
+insert into tb_Day (name_Day) value("Lunes");
 create table tb_CitaPatient(idCitaPatient int primary key auto_increment,
 hour_CitaPatient TIME (0) not null,
 date_CitaPatient date not null,
@@ -228,6 +228,23 @@ alter table tb_CitaPatient add FOREIGN KEY (fk_Day) references tb_Day(idDay)on u
 alter table tb_CitaPatient add FOREIGN KEY (fk_Patient) references tb_Patient(idPatient)on update cascade on delete cascade;
 
 ALTER TABLE tb_CitaPatient CHANGE hour_CitaPatient hour_CitaPatient TIME (0) not null;
+
+create or replace view vw_CitaDoc AS SELECT idCitaPatient as id,
+name_Day as Day,
+hour_CitaPatient as hour,
+date_CitaPatient as dateCP,
+description_CitaPatient as description,
+name_PersonPatient as namePatient,
+surname_PersonPatient as surnamePatient,
+tel_PersonPatient as telPatient,
+address_UserPatient as address,
+gender_PersonPatient as genderPatient,
+email_UserPatient as emailPatient,
+name_Person as nameDoctor,
+surname_Person as surnameDoctor,
+professionalId_Doctor as professionalId,
+idPatient as idPatient
+from (tb_Users join tb_Person join tb_Doctor join tb_Day join tb_Patient join tb_CitaPatient join tb_PersonPatient join tb_UsersPatient) where ((`tb_Users`.`fk_Person` = `tb_Person`.`idPerson`) and (`tb_CitaPatient`.`fk_Day`= `tb_Day`.`idDay`) and (`tb_CitaPatient`.`fk_Doctor` = `tb_Doctor`.`idDoctor`)and(`tb_CitaPatient`.`fk_Patient` = `tb_Patient`.`idPatient`) and (`tb_UsersPatient`.`fk_PersonPatient` = `tb_PersonPatient`.`idPersonPatient`) and (`tb_Patient`.`fk_PersonPatient` = `tb_PersonPatient`.`idPersonPatient`) and (`tb_Doctor`.`fk_Person` = `tb_Person`.`idPerson`));
 
 
 
